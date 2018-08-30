@@ -37,7 +37,6 @@ struct _escontext
 
 };
 
-
 struct _escontext ESContext = {
   .native_display = NULL,
   .window_width = 0,
