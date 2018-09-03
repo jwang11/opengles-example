@@ -16,6 +16,20 @@ GLuint gWorldLocation;
 GLuint VBO;
 GLuint IBO;
 
+GLfloat vVertices[] = {
+    -1.0f, -1.0f, 0.0f,
+     0.0f, -1.0f, 1.0f,
+     1.0f, -1.0f, 0.0f,
+     0.0f,  1.0f, 0.0f
+};
+
+unsigned int Indices[] = {
+    0, 3, 1,
+    1, 3, 2,
+    2, 3, 0,
+    0, 1, 2
+};
+
 /*
  * Initialize the shaders and return the program object
  */
@@ -80,20 +94,14 @@ void draw(GLint width, GLint height)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
     glClear(GL_COLOR_BUFFER_BIT);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, sizeof(Indices), GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
 }
 
 static void CreateVertexBuffer()
 {
-    GLfloat vVertices[] =
-      { -1.0f, -1.0f, 0.0f,
-         0.0f, -1.0f, 1.0f,
-         1.0f, -1.0f, 0.0f,
-	 0.0f,  1.0f, 0.0f
-      };
-
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vVertices), vVertices, GL_STATIC_DRAW);
@@ -101,10 +109,6 @@ static void CreateVertexBuffer()
 
 static void CreateIndexBuffer()
 {
-    unsigned int Indices[] = { 0, 3, 1,
-                               1, 3, 2,
-                               2, 3, 0,
-                               0, 1, 2 };
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);

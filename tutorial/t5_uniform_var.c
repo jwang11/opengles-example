@@ -13,6 +13,13 @@
 #include <math.h>
 
 GLuint gScaleLocation;
+GLuint VBO;
+
+Vector3f vVertices[] = { 
+    Vector3f(0.0f, 1.0f, 0.0f),
+    Vector3f(-1.0f, -1.0f, 0.0f),
+    Vector3f(1.0f, -1.0f, 0.0f)
+};
 
 /*
  * Initialize the shaders and return the program object
@@ -55,6 +62,13 @@ GLuint initProgramObject()
     return programObject;
 }
 
+static void CreateVertexBuffer()
+{
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vVertices), vVertices, GL_STATIC_DRAW);
+}
+
 /*
  * Draw a triangle which change size dynamically
  */
@@ -63,16 +77,14 @@ void draw(GLint width, GLint height)
     static float Scale = 0.0f;
     Scale += 0.01f;
     glUniform1f(gScaleLocation, sinf(Scale));
-    GLfloat vVertices[] = { 0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f };
 
-    glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
     glEnableVertexAttribArray(0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(vVertices)/sizeof(Vector3f));
+    glDisableVertexAttribArray(0);
 }
 
 int main(int argc, char** argv)
@@ -84,10 +96,12 @@ int main(int argc, char** argv)
 
     initWindow(width, height, &wlDisplay);
 
+    CreateVertexBuffer();
     GLuint programObject = initProgramObject();
     gScaleLocation = glGetUniformLocation(programObject, "gScale");
     assert(gScaleLocation != 0xFFFFFFFF);
 
+    glViewport(0, 0, width, height);
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);

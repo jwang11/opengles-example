@@ -18,9 +18,9 @@ static void registry_global(void* data, struct wl_registry* registry, uint32_t i
 {
     struct WaylandGlobals* globals = (struct WaylandGlobals *)data;
     if (strcmp(interface, "wl_compositor") == 0) {
-        globals->compositor = wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+        globals->compositor = (struct wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
     } else if (strcmp(interface, "wl_shell") == 0) {
-        globals->shell = wl_registry_bind(registry, id, &wl_shell_interface, 1);
+        globals->shell = (struct wl_shell *)wl_registry_bind(registry, id, &wl_shell_interface, 1);
     }
 }
 
