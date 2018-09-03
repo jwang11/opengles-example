@@ -1,15 +1,18 @@
 /*
- * A simple Wayland EGL program to show a triangle
+ * A simple Wayland EGL program to show uniform variable
  *
  */
 
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#include <assert.h>
 #include <string.h>
+#include <math.h>
+#include <assert.h>
 #include <wayland-client.h>
 #include <wayland-egl.h>
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
 #include "util.h"
+
+GLuint gWorldLocation;
 
 /*
  * Initialize the shaders and return the program object
@@ -17,10 +20,11 @@
 GLuint initProgramObject()
 {
     char vShaderStr[] = "#version 300 es                          \n"
-                        "layout(location = 0) in vec4 vPosition;  \n"
+                        "layout(location = 0) in vec3 Position;  \n"
+			"uniform mat4 gWorld;  \n"
                         "void main()                              \n"
                         "{                                        \n"
-                        "   gl_Position = vPosition;              \n"
+                        "   gl_Position = gWorld * vec4(Position, 1.0);   \n"
                         "}                                        \n";
 
     char fShaderStr[] = "#version 300 es                              \n"
@@ -45,16 +49,28 @@ GLuint initProgramObject()
     GLint linked;
     glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
     assert(linked);
+
     glUseProgram(programObject);
 
     return programObject;
 }
 
 /*
- * Draw a triangle
+ * Draw a triangle which change size dynamically
  */
 void draw(GLint width, GLint height)
 {
+    static float Scale = 0.0f;
+
+    Scale += 0.01f;
+    struct Matrix4f World;
+
+    World.m[0][0] = cosf(Scale); World.m[0][1] = -sinf(Scale); World.m[0][2] = 0.0f; World.m[0][3] = 0.0f;
+    World.m[1][0] = sinf(Scale); World.m[1][1] = cosf(Scale);  World.m[1][2] = 0.0f; World.m[1][3] = 0.0f;
+    World.m[2][0] = 0.0f;        World.m[2][1] = 0.0f;         World.m[2][2] = 1.0f; World.m[2][3] = 0.0f;
+    World.m[3][0] = 0.0f;        World.m[3][1] = 0.0f;         World.m[3][2] = 0.0f; World.m[3][3] = 1.0f;
+
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, &World.m[0][0]);
     GLfloat vVertices[] = { 0.0f, 1.0f, 0.0f,
         -1.0f, -1.0f, 0.0f,
         1.0f, -1.0f, 0.0f };
@@ -77,6 +93,8 @@ int main(int argc, char** argv)
     initWindow(width, height, &wlDisplay);
 
     GLuint programObject = initProgramObject();
+    gWorldLocation = glGetUniformLocation(programObject, "gWorld");
+    assert(gWorldLocation != 0xFFFFFFFF);
 
     while (1) {
         wl_display_dispatch_pending(wlDisplay);

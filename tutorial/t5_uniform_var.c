@@ -50,6 +50,8 @@ GLuint initProgramObject()
     glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
     assert(linked);
 
+    glUseProgram(programObject);
+
     return programObject;
 }
 
@@ -79,21 +81,17 @@ int main(int argc, char** argv)
     int height = 240;
 
     struct wl_display* wlDisplay;
-    EGLDisplay eglDisplay;
-    EGLSurface eglSurface;
 
-    initWindow(width, height, &wlDisplay, &eglDisplay, &eglSurface);
+    initWindow(width, height, &wlDisplay);
 
     GLuint programObject = initProgramObject();
-    assert(programObject);
-    glUseProgram(programObject);
     gScaleLocation = glGetUniformLocation(programObject, "gScale");
     assert(gScaleLocation != 0xFFFFFFFF);
 
     while (1) {
-        wl_display_dispatch_pending((EGLNativeDisplayType)wlDisplay);
+        wl_display_dispatch_pending(wlDisplay);
         draw(width, height);
-        eglSwapBuffers(eglDisplay, eglSurface);
+	RefreshWindow();
     }
 
     glDeleteProgram(programObject);

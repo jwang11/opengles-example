@@ -14,8 +14,13 @@ struct WaylandGlobals {
     struct wl_shell* shell;
 };
 
-void initWindow(GLint width, GLint height, struct wl_display** wlDisplay, EGLDisplay* eglDisplay, EGLSurface* eglSurface);
+struct Matrix4f {
+    float m[4][4];
+};
+
+void initWindow(GLint width, GLint height, struct wl_display** wlDisplay);
 GLuint LoadShader(GLenum type, const char* shaderSrc);
+void RefreshWindow(void);
 
 #ifdef __cplusplus
 }

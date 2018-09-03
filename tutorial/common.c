@@ -2,10 +2,15 @@
 #include <GLES2/gl2.h>
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include <wayland-client.h>
 #include <wayland-egl.h>
 #include "util.h"
-   
+
+
+static EGLDisplay eglDisplay;
+static EGLSurface eglSurface;
+
 /*
  * Registry callbacks
  */
@@ -55,7 +60,7 @@ static void initWaylandDisplay(struct wl_display** wlDisplay, struct wl_surface*
  * output eglDisplay
  * output eglSurface
  */
-static void initEGLDisplay(EGLNativeDisplayType nativeDisplay, EGLNativeWindowType nativeWindow, EGLDisplay* eglDisplay, EGLSurface* eglSurface)
+static void initEGLDisplay(EGLNativeDisplayType nativeDisplay, EGLNativeWindowType nativeWindow, EGLDisplay* eglDisp, EGLSurface* eglSurf)
 {
     EGLint number_of_config;
     EGLint config_attribs[] = {
@@ -73,23 +78,23 @@ static void initEGLDisplay(EGLNativeDisplayType nativeDisplay, EGLNativeWindowTy
         EGL_NONE
     };
 
-    *eglDisplay = eglGetDisplay(nativeDisplay);
-    assert(*eglDisplay != EGL_NO_DISPLAY);
+    *eglDisp = eglGetDisplay(nativeDisplay);
+    assert(*eglDisp != EGL_NO_DISPLAY);
 
-    EGLBoolean initialized = eglInitialize(*eglDisplay, NULL, NULL);
+    EGLBoolean initialized = eglInitialize(*eglDisp, NULL, NULL);
     assert(initialized == EGL_TRUE);
 
     EGLConfig configs[1];
 
-    eglChooseConfig(*eglDisplay, config_attribs, configs, 1, &number_of_config);
+    eglChooseConfig(*eglDisp, config_attribs, configs, 1, &number_of_config);
     assert(number_of_config);
 
-    EGLContext eglContext = eglCreateContext(*eglDisplay, configs[0], EGL_NO_CONTEXT, context_attribs);
+    EGLContext eglContext = eglCreateContext(*eglDisp, configs[0], EGL_NO_CONTEXT, context_attribs);
 
-    *eglSurface = eglCreateWindowSurface(*eglDisplay, configs[0], nativeWindow, NULL);
-    assert(*eglSurface != EGL_NO_SURFACE);
+    *eglSurf = eglCreateWindowSurface(*eglDisp, configs[0], nativeWindow, NULL);
+    assert(*eglSurf != EGL_NO_SURFACE);
 
-    EGLBoolean makeCurrent = eglMakeCurrent(*eglDisplay, *eglSurface, *eglSurface, eglContext);
+    EGLBoolean makeCurrent = eglMakeCurrent(*eglDisp, *eglSurf, *eglSurf, eglContext);
     assert(makeCurrent == EGL_TRUE);
 }
 
@@ -101,7 +106,7 @@ static void initEGLDisplay(EGLNativeDisplayType nativeDisplay, EGLNativeWindowTy
  * output eglDisplay
  * output eglSurface
  */
-void initWindow(GLint width, GLint height, struct wl_display** wlDisplay, EGLDisplay* eglDisplay, EGLSurface* eglSurface)
+void initWindow(GLint width, GLint height, struct wl_display** wlDisplay)
 {
     struct wl_surface* wlSurface;
     initWaylandDisplay(wlDisplay, &wlSurface);
@@ -109,7 +114,7 @@ void initWindow(GLint width, GLint height, struct wl_display** wlDisplay, EGLDis
     struct wl_egl_window* wlEglWindow = wl_egl_window_create(wlSurface, width, height);
     assert(wlEglWindow != NULL);
 
-    initEGLDisplay((EGLNativeDisplayType) *wlDisplay, (EGLNativeWindowType) wlEglWindow, eglDisplay, eglSurface);
+    initEGLDisplay((EGLNativeDisplayType) *wlDisplay, (EGLNativeWindowType) wlEglWindow, &eglDisplay, &eglSurface);
 }
 
 /*
@@ -135,7 +140,20 @@ GLuint LoadShader(GLenum type, const char* shaderSrc)
 
     GLint compiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-    assert(compiled);
+    if (!compiled) {
+        GLchar InfoLog[1024];
+        glGetShaderInfoLog(shader, 1024, NULL, InfoLog);
+	if (type == GL_VERTEX_SHADER)
+            fprintf(stderr, "Error compiling vetex shader: '%s'\n", InfoLog);
+	if (type == GL_FRAGMENT_SHADER)
+            fprintf(stderr, "Error compiling fragment shader: '%s'\n", InfoLog);
+        exit(1);
+    }
 
     return shader;
+}
+
+void RefreshWindow(void)
+{
+    eglSwapBuffers(eglDisplay, eglSurface);
 }
