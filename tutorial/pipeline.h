@@ -2,6 +2,7 @@
 #define	PIPELINE_H
 
 #include "math_3d.h"
+#include "camera.h"
 
 struct Orientation
 {
@@ -82,6 +83,11 @@ public:
 		m_camera.Up = Up;
 	}
 
+	void SetCamera(const Camera& camera)
+        {
+                SetCamera(camera.GetPos(), camera.GetTarget(), camera.GetUp());
+        }
+
 	void Orient(const Orientation& o)
 	{
 		m_scale = o.m_scale;
@@ -89,9 +95,12 @@ public:
 		m_rotateInfo = o.m_rotation;
 	}
 
-	const Matrix4f& GetWPTrans();
 	const Matrix4f& GetWorldTrans();
 	const Matrix4f& GetProjTrans();
+	const Matrix4f& GetViewTrans();
+	const Matrix4f& GetWPTrans();
+	const Matrix4f& GetVPTrans();
+	const Matrix4f& GetWVPTrans();
 
 private:
 	Vector3f m_scale;

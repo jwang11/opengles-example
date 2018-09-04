@@ -1,7 +1,15 @@
-OBJS := simple_triangle uniform_var translation rotation scaling interpolation indexed_draw contatenate_transf perspective_projection
+OBJS := simple_triangle \
+	uniform_var translation \
+	rotation \
+	scaling \
+	interpolation \
+	indexed_draw \
+	contatenate_transf \
+	perspective_projection \
+	camera_space
 
 all: $(OBJS)
-	@echo 
+	@echo $(OBJS)
 
 simple_triangle: common.c t4_simple_triangle.c
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2
@@ -28,6 +36,9 @@ contatenate_transf: common.c math_3d.c pipeline.c t11_contatenate_transf.c
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
 perspective_projection: common.c math_3d.c pipeline.c t12_perspective_projection.c 
+	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
+
+camera_space: common.c math_3d.c pipeline.c camera.c t13_camera_space.c 
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
 .PHONY: clean

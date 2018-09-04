@@ -295,6 +295,7 @@ public:
 	void InitRotateTransform(const Quaternion& quat);
 	void InitTranslationTransform(float x, float y, float z);
 	void InitPersProjTransform(const PersProjInfo& p);
+	void InitCameraTransform(const Vector3f& Target, const Vector3f& Up);
 };
 
 Quaternion operator*(const Quaternion& l, const Quaternion& r);
