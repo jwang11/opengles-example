@@ -1,4 +1,4 @@
-OBJS := simple_triangle uniform_var translation rotation scaling interpolation indexed_draw contatenate_transf
+OBJS := simple_triangle uniform_var translation rotation scaling interpolation indexed_draw contatenate_transf perspective_projection
 
 all: $(OBJS)
 	@echo 
@@ -25,6 +25,9 @@ indexed_draw: common.c t10_indexed_draw.c
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
 contatenate_transf: common.c math_3d.c pipeline.c t11_contatenate_transf.c 
+	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
+
+perspective_projection: common.c math_3d.c pipeline.c t12_perspective_projection.c 
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
 .PHONY: clean

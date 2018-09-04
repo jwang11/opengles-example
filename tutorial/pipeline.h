@@ -70,6 +70,11 @@ public:
 		Rotate(r.x, r.y, r.z);
 	}
 
+	void SetPerspectiveProj(const PersProjInfo& p)
+	{
+		m_persProjInfo = p;
+	}
+
 	void SetCamera(const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up)
 	{
 		m_camera.Pos = Pos;
@@ -84,12 +89,15 @@ public:
 		m_rotateInfo = o.m_rotation;
 	}
 
+	const Matrix4f& GetWPTrans();
 	const Matrix4f& GetWorldTrans();
+	const Matrix4f& GetProjTrans();
 
 private:
 	Vector3f m_scale;
 	Vector3f m_worldPos;
 	Vector3f m_rotateInfo;
+	PersProjInfo m_persProjInfo;
 
 	struct {
 		Vector3f Pos;

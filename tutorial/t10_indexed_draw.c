@@ -16,14 +16,14 @@ GLuint gWorldLocation;
 GLuint VBO;
 GLuint IBO;
 
-GLfloat vVertices[] = {
+static GLfloat vVertices[] = {
     -1.0f, -1.0f, 0.0f,
      0.0f, -1.0f, 1.0f,
      1.0f, -1.0f, 0.0f,
      0.0f,  1.0f, 0.0f
 };
 
-unsigned int Indices[] = {
+static unsigned int Indices[] = {
     0, 3, 1,
     1, 3, 2,
     2, 3, 0,
@@ -88,14 +88,12 @@ void draw(GLint width, GLint height)
     World.m[1][0] = 0.0;         World.m[1][1] = 1.0f; World.m[1][2] = 0.0f        ; World.m[1][3] = 0.0f;
     World.m[2][0] = sinf(Scale); World.m[2][1] = 0.0f; World.m[2][2] = cosf(Scale) ; World.m[2][3] = 0.0f;
     World.m[3][0] = 0.0f;        World.m[3][1] = 0.0f; World.m[3][2] = 0.0f        ; World.m[3][3] = 1.0f;
-
     glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, &World.m[0][0]);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawElements(GL_TRIANGLES, sizeof(Indices), GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
 }
@@ -131,6 +129,7 @@ int main(int argc, char** argv)
     CreateIndexBuffer();
 
     glViewport(0, 0, width, height);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);

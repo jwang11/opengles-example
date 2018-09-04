@@ -11,3 +11,20 @@ const Matrix4f& Pipeline::GetWorldTrans()
 	m_Wtransformation = TranslationTrans * RotateTrans * ScaleTrans;
 	return m_Wtransformation;
 }
+
+const Matrix4f& Pipeline::GetProjTrans()
+{
+	m_ProjTransformation.InitPersProjTransform(m_persProjInfo);
+	return m_ProjTransformation;
+}
+
+const Matrix4f& Pipeline::GetWPTrans()
+{
+	Matrix4f PersProjTrans;
+
+	GetWorldTrans();
+	PersProjTrans.InitPersProjTransform(m_persProjInfo);
+
+	m_WPtransformation = PersProjTrans * m_Wtransformation;
+	return m_WPtransformation;
+}

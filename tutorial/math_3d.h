@@ -173,6 +173,25 @@ inline Vector4f operator/(const Vector4f& l, float f)
 	return Ret;
 }
 
+struct PersProjInfo
+{
+	float FOV;
+	float Width;
+	float Height;
+	float zNear;
+	float zFar;
+};
+
+struct OrthoProjInfo
+{
+	float r;        // right
+	float l;        // left
+	float b;        // bottom
+	float t;        // top
+	float n;        // z near
+	float f;        // z far
+};
+
 struct Quaternion
 {
 	float x, y, z, w;
@@ -275,6 +294,7 @@ public:
 	void InitRotateTransform(float RotateX, float RotateY, float RotateZ);
 	void InitRotateTransform(const Quaternion& quat);
 	void InitTranslationTransform(float x, float y, float z);
+	void InitPersProjTransform(const PersProjInfo& p);
 };
 
 Quaternion operator*(const Quaternion& l, const Quaternion& r);

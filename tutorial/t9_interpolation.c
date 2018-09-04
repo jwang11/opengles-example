@@ -15,7 +15,7 @@
 GLuint gWorldLocation;
 GLuint VBO;
 
-Vector3f vVertices[] = { 
+static Vector3f vVertices[] = { 
     Vector3f(0.0f, 1.0f, 0.0f),
     Vector3f(-1.0f, -1.0f, 0.0f),
     Vector3f(1.0f, -1.0f, 0.0f),
@@ -89,14 +89,12 @@ void draw(GLint width, GLint height)
     World.m[1][0] = 0.0f        ; World.m[1][1] = sinf(Scale); World.m[1][2] = 0.0f;        World.m[1][3] = 0.0f;
     World.m[2][0] = 0.0f;       ; World.m[2][1] = 0.0f;      ; World.m[2][2] = sinf(Scale); World.m[2][3] = 0.0f;
     World.m[3][0] = 0.0f;       ; World.m[3][1] = 0.0f;      ; World.m[3][2] = 0.0f;        World.m[3][3] = 1.0f;
-
     glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, &World.m[0][0]);
 
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vVertices)/sizeof(Vector3f));
     glDisableVertexAttribArray(0);
 }
@@ -116,6 +114,7 @@ int main(int argc, char** argv)
     assert(gWorldLocation != 0xFFFFFFFF);
 
     glViewport(0, 0, width, height);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);

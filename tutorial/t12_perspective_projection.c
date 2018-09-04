@@ -16,11 +16,12 @@
 GLuint gWorldLocation;
 GLuint VBO;
 GLuint IBO;
+PersProjInfo gPersProjInfo;
 
 static GLfloat vVertices[] = {
-    -1.0f, -1.0f, 0.0f,
-     0.0f, -1.0f, 1.0f,
-     1.0f, -1.0f, 0.0f,
+    -1.0f, -1.0f, 0.57f,
+     0.0f, -1.0f, -1.15f,
+     1.0f, -1.0f, 0.57f,
      0.0f,  1.0f, 0.0f
 };
 
@@ -81,13 +82,13 @@ GLuint initProgramObject()
 void draw(GLint width, GLint height)
 {
     static float Scale = 0.0f;
-    Scale += 0.01f;
+    Scale += 0.1f;
 
     Pipeline p;
-    p.Scale(sinf(Scale * 0.1f), sinf(Scale * 0.1f), sinf(Scale * 0.1f));
-    p.WorldPos(sinf(Scale), 0.0f, 0.0f);
-    p.Rotate(sinf(Scale) * 90.0f, sinf(Scale) * 90.0f, sinf(Scale) * 90.0f);
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWorldTrans());
+    p.Rotate(0.0f, Scale, 0.0f);
+    p.WorldPos(0.0f, 0.0f, 5.0f);
+    p.SetPerspectiveProj(gPersProjInfo);
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWPTrans());
 
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -123,6 +124,12 @@ int main(int argc, char** argv)
     GLuint programObject = initProgramObject();
     gWorldLocation = glGetUniformLocation(programObject, "gWorld");
     assert(gWorldLocation != 0xFFFFFFFF);
+ 
+    gPersProjInfo.FOV = 30.0f;
+    gPersProjInfo.Height = height;
+    gPersProjInfo.Width = width;
+    gPersProjInfo.zNear = 1.0f;
+    gPersProjInfo.zFar = 100.0f;
 
     CreateVertexBuffer();
     CreateIndexBuffer();
