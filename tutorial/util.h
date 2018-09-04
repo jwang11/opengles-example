@@ -5,6 +5,7 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+#include "math_3d.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,24 +13,6 @@ extern "C" {
 struct WaylandGlobals {
     struct wl_compositor* compositor;
     struct wl_shell* shell;
-};
-
-struct Matrix4f {
-    float m[4][4];
-};
-
-struct Vector3f
-{
-	float x;
-	float y;
-	float z;
-
-	Vector3f(float _x, float _y, float _z)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-	}
 };
 
 void initWindow(GLint width, GLint height, struct wl_display** wlDisplay);

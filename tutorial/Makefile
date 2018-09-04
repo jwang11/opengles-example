@@ -1,4 +1,5 @@
-OBJS := simple_triangle uniform_var translation rotation scaling interpolation indexed_draw
+OBJS := simple_triangle uniform_var translation rotation scaling interpolation indexed_draw contatenate_transf
+
 all: $(OBJS)
 	@echo 
 
@@ -21,6 +22,9 @@ interpolation: common.c t9_interpolation.c
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
 indexed_draw: common.c t10_indexed_draw.c
+	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
+
+contatenate_transf: common.c math_3d.c pipeline.c t11_contatenate_transf.c 
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
 .PHONY: clean
