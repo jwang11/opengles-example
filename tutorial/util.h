@@ -13,7 +13,10 @@ extern "C" {
 struct WaylandGlobals {
     struct wl_compositor* compositor;
     struct wl_shell* shell;
+    struct wl_seat *seat;
+    struct wl_keyboard *keyboard;
 };
+
 
 void initWindow(GLint width, GLint height, struct wl_display** wlDisplay);
 GLuint LoadShader(GLenum type, const char* shaderSrc);

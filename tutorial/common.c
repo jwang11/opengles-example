@@ -5,11 +5,77 @@
 #include <stdio.h>
 #include <wayland-client.h>
 #include <wayland-egl.h>
+#include <wayland-cursor.h>
+
 #include "util.h"
 
 
 static EGLDisplay eglDisplay;
 static EGLSurface eglSurface;
+
+uint32_t press_key = 0;
+
+static void
+keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
+                       uint32_t format, int fd, uint32_t size)
+{
+}
+
+static void
+keyboard_handle_enter(void *data, struct wl_keyboard *keyboard,
+                      uint32_t serial, struct wl_surface *surface,
+                      struct wl_array *keys)
+{
+}
+
+static void
+keyboard_handle_leave(void *data, struct wl_keyboard *keyboard,
+                      uint32_t serial, struct wl_surface *surface)
+{
+}
+
+static void
+keyboard_handle_key(void *data, struct wl_keyboard *keyboard,
+                    uint32_t serial, uint32_t time, uint32_t key,
+                    uint32_t state)
+{
+    if (state == 1)
+        press_key = key;
+}
+
+static void
+keyboard_handle_modifiers(void *data, struct wl_keyboard *keyboard,
+                          uint32_t serial, uint32_t mods_depressed,
+                          uint32_t mods_latched, uint32_t mods_locked,
+                          uint32_t group)
+{
+}
+
+static const struct wl_keyboard_listener keyboard_listener = {
+    keyboard_handle_keymap,
+    keyboard_handle_enter,
+    keyboard_handle_leave,
+    keyboard_handle_key,
+    keyboard_handle_modifiers,
+};
+
+static void
+seat_handle_capabilities(void *data, struct wl_seat *seat,
+                         uint32_t caps)
+{
+    struct WaylandGlobals* d = (struct WaylandGlobals *)data;
+    if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !d->keyboard) {
+        d->keyboard = wl_seat_get_keyboard(seat);
+        wl_keyboard_add_listener(d->keyboard, &keyboard_listener, d);
+    } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && d->keyboard) {
+        wl_keyboard_destroy(d->keyboard);
+        d->keyboard = NULL;
+    }
+}
+
+static const struct wl_seat_listener seat_listener = {
+        seat_handle_capabilities,
+};
 
 /*
  * Registry callbacks
@@ -21,6 +87,10 @@ static void registry_global(void* data, struct wl_registry* registry, uint32_t i
         globals->compositor = (struct wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
     } else if (strcmp(interface, "wl_shell") == 0) {
         globals->shell = (struct wl_shell *)wl_registry_bind(registry, id, &wl_shell_interface, 1);
+    } else if (strcmp(interface, "wl_seat") == 0) {
+        globals->seat = (struct wl_seat *)wl_registry_bind(registry, id,
+                                   &wl_seat_interface, 1);
+        wl_seat_add_listener(globals->seat, &seat_listener, globals);    
     }
 }
 

@@ -73,6 +73,51 @@ void Camera::Init()
 	// glutWarpPointer(m_mousePos.x, m_mousePos.y);
 }
 
+bool Camera::OnKeyboard(unsigned int Key)
+{
+        bool Ret = false;
+
+        switch (Key) {
+        case 103:
+        {
+            m_pos += (m_target * STEP_SCALE);
+            Ret = true;
+        }
+        break;
+
+        case 108:
+        {
+            m_pos -= (m_target * STEP_SCALE);
+            Ret = true;
+        }
+        break;
+
+        case 105:
+        {
+            Vector3f Left = m_target.Cross(m_up);
+            Left.Normalize();
+            Left *= STEP_SCALE;
+            m_pos += Left;
+            Ret = true;
+        }
+        break;
+
+        case 106:
+        {
+            Vector3f Right = m_up.Cross(m_target);
+            Right.Normalize();
+            Right *= STEP_SCALE;
+            m_pos += Right;
+            Ret = true;
+        }
+
+        default:
+                break; 
+        }
+
+	return Ret;
+}
+
 void Camera::OnRender()
 {
 	bool ShouldUpdate = false;

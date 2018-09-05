@@ -86,13 +86,15 @@ void draw(GLint width, GLint height)
 {
     static float Scale = 0.0f;
     Scale += 0.1f;
+    if (press_key) {
+        uint32_t key = press_key;	    
+	press_key = 0;
+        pGameCamera->OnKeyboard(key);
+    }
 
     Pipeline p;
     p.Rotate(0.0f, Scale, 0.0f);
     p.WorldPos(0.0f, 0.0f, 3.0f);
-//    Vector3f CameraPos(0.0f, 0.0f, -3.0f);
-//    Vector3f CameraTarget(0.0f, 0.0f, 2.0f);
-//    Vector3f CameraUp(0.0f, 1.0f, 0.0f);
     p.SetCamera(*pGameCamera);
     p.SetPerspectiveProj(gPersProjInfo);
     glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWVPTrans());
