@@ -15,6 +15,7 @@ struct WaylandGlobals {
     struct wl_shell* shell;
     struct wl_seat *seat;
     struct wl_keyboard *keyboard;
+    struct wl_pointer *pointer;
 };
 
 

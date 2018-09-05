@@ -14,6 +14,8 @@ static EGLDisplay eglDisplay;
 static EGLSurface eglSurface;
 
 uint32_t press_key = 0;
+uint32_t pointer_x = 0;
+uint32_t pointer_y = 0;
 
 static void
 keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard,
@@ -60,10 +62,60 @@ static const struct wl_keyboard_listener keyboard_listener = {
 };
 
 static void
+pointer_handle_enter(void *data, struct wl_pointer *pointer,
+                     uint32_t serial, struct wl_surface *surface,
+                     wl_fixed_t sx, wl_fixed_t sy)
+{
+}
+
+static void
+pointer_handle_leave(void *data, struct wl_pointer *pointer,
+                     uint32_t serial, struct wl_surface *surface)
+{
+}
+
+static void
+pointer_handle_motion(void *data, struct wl_pointer *pointer,
+                      uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
+{
+    pointer_x = sx;
+    pointer_y = sy;
+}
+
+static void
+pointer_handle_button(void *data, struct wl_pointer *wl_pointer,
+                      uint32_t serial, uint32_t time, uint32_t button,
+                      uint32_t state)
+{
+}
+
+static void
+pointer_handle_axis(void *data, struct wl_pointer *wl_pointer,
+                    uint32_t time, uint32_t axis, wl_fixed_t value)
+{
+}
+
+static const struct wl_pointer_listener pointer_listener = {
+        pointer_handle_enter,
+        pointer_handle_leave,
+        pointer_handle_motion,
+        pointer_handle_button,
+        pointer_handle_axis,
+};
+
+static void
 seat_handle_capabilities(void *data, struct wl_seat *seat,
                          uint32_t caps)
 {
     struct WaylandGlobals* d = (struct WaylandGlobals *)data;
+    if ((caps & WL_SEAT_CAPABILITY_POINTER) && !d->pointer) {
+        d->pointer = wl_seat_get_pointer(seat);
+        wl_pointer_add_listener(d->pointer, &pointer_listener, d);
+    } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && d->pointer) {
+        wl_pointer_destroy(d->pointer);
+        d->pointer = NULL;
+    }
+    
     if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !d->keyboard) {
         d->keyboard = wl_seat_get_keyboard(seat);
         wl_keyboard_add_listener(d->keyboard, &keyboard_listener, d);
@@ -186,16 +238,6 @@ void initWindow(GLint width, GLint height, struct wl_display** wlDisplay)
 
     initEGLDisplay((EGLNativeDisplayType) *wlDisplay, (EGLNativeWindowType) wlEglWindow, &eglDisplay, &eglSurface);
 }
-
-/*
-static void delete_window (struct window *window) {
-        eglDestroySurface (egl_display, window->egl_surface);
-        wl_egl_window_destroy (window->egl_window);
-        wl_shell_surface_destroy (window->shell_surface);
-        wl_surface_destroy (window->surface);
-        eglDestroyContext (egl_display, window->egl_context);
-}
-*/
 
 /*
  * Return the loaded and compiled shader

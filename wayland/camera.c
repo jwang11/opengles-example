@@ -118,6 +118,48 @@ bool Camera::OnKeyboard(unsigned int Key)
 	return Ret;
 }
 
+void Camera::OnMouse(int x, int y)
+{
+        const int DeltaX = x - m_mousePos.x;
+        const int DeltaY = y - m_mousePos.y;
+
+        m_mousePos.x = x;
+        m_mousePos.y = y;
+
+        m_AngleH += (float)DeltaX / 200.0f;
+        m_AngleV += (float)DeltaY / 200.0f;
+
+        if (DeltaX == 0) {
+                if (x <= MARGIN) {
+                        //    m_AngleH -= 1.0f;
+                        m_OnLeftEdge = true;
+                }
+                else if (x >= (m_windowWidth - MARGIN)) {
+                        //    m_AngleH += 1.0f;
+                        m_OnRightEdge = true;
+                }
+        }
+        else {
+                m_OnLeftEdge = false;
+                m_OnRightEdge = false;
+        }
+
+        if (DeltaY == 0) {
+                if (y <= MARGIN) {
+                        m_OnUpperEdge = true;
+                }
+                else if (y >= (m_windowHeight - MARGIN)) {
+                        m_OnLowerEdge = true;
+                }
+        }
+        else {
+                m_OnUpperEdge = false;
+                m_OnLowerEdge = false;
+        }
+
+        Update();
+}
+ 
 void Camera::OnRender()
 {
 	bool ShouldUpdate = false;

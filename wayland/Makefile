@@ -7,7 +7,8 @@ OBJS := simple_triangle	\
 	contatenate_transf	\
 	perspective_projection	\
 	camera_space		\
-	camera_control
+	camera_control		\
+	camera_pointer
 
 all: $(OBJS)
 	@echo $(OBJS)
@@ -45,6 +46,8 @@ camera_space: common.c math_3d.c pipeline.c camera.c t13_camera_space.c
 camera_control: common.c math_3d.c pipeline.c camera.c t14_camera_control.c 
 	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 
+camera_pointer: common.c math_3d.c pipeline.c camera.c t15_camera_pointer.c 
+	g++ -o $@ $^ -lwayland-client -lwayland-egl -lEGL -lGLESv2 -lm
 .PHONY: clean
 clean:
 	@rm -f $(OBJS)

@@ -12,6 +12,8 @@ public:
 	Camera(int WindowWidth, int WindowHeight, const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up);
 
         bool OnKeyboard(unsigned int Key);
+	void OnMouse(int x, int y);
+
 	void OnRender();
 
 	const Vector3f& GetPos() const
