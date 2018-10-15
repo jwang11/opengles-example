@@ -29,7 +29,7 @@ GLuint initProgramObject()
 {
     char vShaderStr[] = "#version 300 es                          \n"
                         "layout(location = 0) in vec3 Position;   \n"
-			"uniform mat4 gWorld;                     \n"
+                        "uniform mat4 gWorld;                     \n"
                         "void main()                              \n"
                         "{                                        \n"
                         "   gl_Position = gWorld * vec4(Position, 1.0);   \n"
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);
-	RefreshWindow();
+        RefreshWindow();
     }
 
     glDeleteProgram(programObject);

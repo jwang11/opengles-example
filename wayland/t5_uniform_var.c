@@ -27,8 +27,8 @@ Vector3f vVertices[] = {
 GLuint initProgramObject()
 {
     char vShaderStr[] = "#version 300 es                          \n"
-                        "layout(location = 0) in vec4 Position;  \n"
-			"uniform float gScale;  \n"
+                        "layout(location = 0) in vec4 Position;   \n"
+                        "uniform float gScale;                    \n"
                         "void main()                              \n"
                         "{                                        \n"
                         "   gl_Position = vec4(gScale * Position.x, gScale * Position.y, Position.z, 1.0);              \n"
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);
-	RefreshWindow();
+        RefreshWindow();
     }
 
     glDeleteProgram(programObject);

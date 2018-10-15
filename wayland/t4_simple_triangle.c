@@ -95,7 +95,7 @@ int main(int argc, char** argv)
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);
-	RefreshWindow();
+        RefreshWindow();
     }
 
     glDeleteProgram(programObject);

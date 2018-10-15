@@ -37,17 +37,17 @@ GLuint initProgramObject()
 {
     char vShaderStr[] = "#version 300 es                          \n"
                         "layout(location = 0) in vec3 Position;   \n"
-			"out vec4 Color;                          \n"
-			"uniform mat4 gWorld;                     \n"
+                        "out vec4 Color;                          \n"
+                        "uniform mat4 gWorld;                     \n"
                         "void main()                              \n"
                         "{                                        \n"
                         "   gl_Position = gWorld * vec4(Position, 1.0);   \n"
-			"   Color = vec4(clamp(Position, 0.0, 1.0), 1.0); \n"
+                        "   Color = vec4(clamp(Position, 0.0, 1.0), 1.0); \n"
                         "}                                        \n";
 
     char fShaderStr[] = "#version 300 es                              \n"
                         "precision mediump float;                     \n"
-			"in vec4 Color;                               \n"
+                        "in vec4 Color;                               \n"
                         "out vec4 fragColor;                          \n"
                         "void main()                                  \n"
                         "{                                            \n"
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
     while (1) {
         wl_display_dispatch_pending(wlDisplay);
         draw(width, height);
-	RefreshWindow();
+        RefreshWindow();
     }
 
     glDeleteProgram(programObject);
