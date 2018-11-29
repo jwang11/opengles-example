@@ -87,6 +87,7 @@ pointer_handle_button(void *data, struct wl_pointer *wl_pointer,
                       uint32_t serial, uint32_t time, uint32_t button,
                       uint32_t state)
 {
+    printf("click button=%u, state=%u\n", button, state);
 }
 
 static void

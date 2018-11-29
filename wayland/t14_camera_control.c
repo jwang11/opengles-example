@@ -87,8 +87,8 @@ void draw(GLint width, GLint height)
     static float Scale = 0.0f;
     Scale += 0.1f;
     if (press_key) {
-        uint32_t key = press_key;	    
-	press_key = 0;
+        uint32_t key = press_key;
+        press_key = 0;
         pGameCamera->OnKeyboard(key);
     }
 

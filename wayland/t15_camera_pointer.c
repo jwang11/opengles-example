@@ -90,7 +90,7 @@ void draw(GLint width, GLint height)
     Scale += 0.1f;
     if (press_key) {
         uint32_t key = press_key;	    
-	press_key = 0;
+        press_key = 0;
         pGameCamera->OnKeyboard(key);
     }
     pGameCamera->OnMouse(pointer_x, pointer_y);
